@@ -7,8 +7,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, LSTM, Dense
 
-# Load your dataset
-df = pd.read_csv("data/merged_news_market.csv")
+# Load the dataset
+df = pd.read_csv("data/cleaned_merged_news_market.csv")
 
 # Extract features and labels
 X = df["headline"].astype(str)
