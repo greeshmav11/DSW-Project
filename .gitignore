@@ -1,6 +1,28 @@
-/.venv
-/sample.ipynb
-/sample.py
-/scrape_and_merge.py
-/ticker.ipynb
-/top20_yahoo_news.csv
+# macOS system files
+.DS_Store
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment files
+.env
+.venv/
+env/
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code / PyCharm config
+.vscode/
+.idea/
+
+
+# Jupyter runtime
+**/.local/share/jupyter/runtime/
+
+# Git ignore itself
+.gitignore
