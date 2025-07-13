@@ -95,7 +95,7 @@ Two classification models (e.g., XXX, XXX) will be trained to predict `popularit
 
 * Greeshma Vishnu (Reg. No.: 106045)
 * Benecia Dsouza
-* Homa Sadat Ale Ebrahim
+* Homa Sadat Ale Ebrahim (Reg. No.: 949777)
 
 ---
 
