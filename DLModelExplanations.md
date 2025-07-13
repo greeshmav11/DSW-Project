@@ -15,9 +15,9 @@ Model Architecture
 
 ### Results    
 •	Best hyperparameters found:     
-o	Batch size: 16     
-o	Epochs: 15     
-o	Dropout rate: 0.3     
+  o	Batch size: 16     
+  o	Epochs: 15     
+  o	Dropout rate: 0.3     
 •	Best cross-validated accuracy: 0.3440      
 •	Test set accuracy on unseen data: 0.3234      
 •	Test loss: 1.0993      
@@ -29,12 +29,35 @@ This suggests that, in this case, the categorical features were more informative
 
 ### Results     
 •	Best hyperparameters found:    
-o	Batch size: 16     
-o	Epochs: 20     
-o	Dropout rate: 0.3      
+  o	Batch size: 16     
+  o	Epochs: 20     
+  o	Dropout rate: 0.3      
 •	Best cross-validated accuracy: 0.5679      
 •	Test set accuracy on unseen data: 0.5647     
-•	Test loss: 0.9387        
+•	Test loss: 0.9387    
+
+### Naive baseline     
+These results show why building a proper model is important and how it performs significantly better than a naive approach:     
+
+#### Model Performance Metrics 	
+Accuracy:  0.5617   
+Precision: 0.6384   
+Recall:    0.5617    
+F1 Score:  0.5395	     
+
+#### Naive Baseline Metrics    
+Accuracy: 0.3234   
+Precision: 0.1046    
+Recall: 0.3234    
+F1 Score: 0.1580    
+
+Our model outperforms the naive baseline by a clear margin across all metrics. This shows:    
+•	It is learning useful patterns from the data.   
+•	It is not guessing blindly like the baseline.    
+•	Even if not perfect, it provides meaningful classification, especially in a noisy task like social media popularity prediction.    
+
+
+
 
 
 
