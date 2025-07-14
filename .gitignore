@@ -1,6 +1,8 @@
 /.venv
+.venv311/
 /sample.ipynb
 /sample.py
 /scrape_and_merge.py
 /ticker.ipynb
 /top20_yahoo_news.csv
+**/sshd_config
