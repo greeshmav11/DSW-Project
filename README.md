@@ -33,15 +33,15 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 * **Timestamp**:
 
-* `created_utc` field was converted to `created_hour`, to retain the hour at which the post was created.
-* And then the original timestamp column was dropped (as it's then redundant)
+  * `created_utc` field was converted to `created_hour`, to retain the hour at which the post was created.
+  * And then the original timestamp column was dropped (as it's then redundant)
 
 * **URL domain analysis**:
 
-* Since the `url` field had a very high cardinality (almost unique for each post), to retain meaningful information, it was first grouped by url domain.
-* However, since the resulting grouping was still very sparse, we decided to group the urls to a more meaningful new field, `media_type`, which categorizes the  posts as image, video, internal Reddit link, or external link based on their urls.
-* This makes sense as these Reddit-hosted domains (like i.redd.it, v.redd.it, and www.reddit.com) for image and video hosting were most dominant.
-* The fields `url` and `url_domain` were dropped afterward.
+  * Since the `url` field had a very high cardinality (almost unique for each post), to retain meaningful information, it was first grouped by url domain.
+  * However, since the resulting grouping was still very sparse, we decided to group the urls to a more meaningful new field, `media_type`, which categorizes the  posts as image, video, internal Reddit link, or external link based on their urls.
+  * This makes sense as these Reddit-hosted domains (like i.redd.it, v.redd.it, and www.reddit.com) for image and video hosting were most dominant.
+  * The fields `url` and `url_domain` were dropped afterward.
 
 * **Text cleaning**:
 
@@ -74,15 +74,15 @@ Two classification models (e.g., XXX, XXX) will be trained to predict `popularit
 ### Challenges faced
 
 * **Finding Accessible Data Sources**
-- Identifying websites that were not blocked, restricted by paywalls, or limited by access policies was a key challenge during data collection.
+  - Identifying websites that were not blocked, restricted by paywalls, or limited by access policies was a key challenge during data collection.
 * **Handling missing values** 
-- Required careful inspection and probing into the data and domain, to figure out the appropriate values to fill into the missing entries (for example: in the author and self-text fields).
+  - Required careful inspection and probing into the data and domain, to figure out the appropriate values to fill into the missing entries (for example: in the author and self-text fields).
 * **Defining popularity**
-- Instead of using raw `score` values, we used quantiles to create balanced, more meaningful categories (by creating field `popularity_bucket`).
-- This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
+  - Instead of using raw `score` values, we used quantiles to create balanced, more meaningful categories (by creating field `popularity_bucket`).
+  - This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
 * **Handling noisy URL data**
-- The `url` values were too varied and detailed for effective modeling (high cardinality).
-- Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.
+  - The `url` values were too varied and detailed for effective modeling (high cardinality).
+  - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.
 
 
 ---
