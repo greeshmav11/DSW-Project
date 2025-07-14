@@ -33,8 +33,8 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 * **Timestamp**:
 
-  * `created_utc` field was converted to `created_hour`, to retain the hour at which the post was created.
-  * And then the original timestamp column was dropped (as it's then redundant)
+* `created_utc` field was converted to `created_hour`, to retain the hour at which the post was created.
+* And then the original timestamp column was dropped (as it's then redundant)
 
 * **URL domain analysis**:
 
