@@ -62,12 +62,22 @@ Two classification models (e.g., XXX, XXX) will be trained to predict `popularit
 
 ```
 .
+DSW PROJECT/
+│
 ├── data/
-│   └── raw_reddit_posts.csv
-├── cleaned_data.csv
-├── data_cleaning.ipynb
-├── modeling.ipynb
+│   ├── reddit_dataset.csv
+│   └── cleaned_reddit_posts.csv
+│
+├── models/
+│   ├── DLModel.ipynb
+│   └── DLModel_CategoricalFeatures.ipynb
+│
+├── notebooks/
+│   ├── reddit_post_scraper.ipynb
+│   └── reddit_dataset_cleaning.ipynb
+│
 ├── README.md
+
 ```
 
 ### To Clean the Data:
@@ -94,7 +104,7 @@ Two classification models (e.g., XXX, XXX) will be trained to predict `popularit
 ## Team Members:
 
 * Greeshma Vishnu (Reg. No.: 106045)
-* Benecia Dsouza
+* Benecia Dsouza (Reg. No.: 106720)
 * Homa Sadat Ale Ebrahim (Reg. No.: 949777)
 
 ---
