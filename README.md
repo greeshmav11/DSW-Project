@@ -19,16 +19,16 @@ Most of the columns (or variables) contained no missing values, except for `self
 * **Handling missing values**:
 
 1. `selftext`:
-  - Since we know that an empty `selftext` means that the Reddit post contains no body text (it’s just a link post or a title-only post).
-  - Hence, we filled these cells with empty string (`''`) (to show no body text).
+    - Since we know that an empty `selftext` means that the Reddit post contains no body text (it’s just a link post or a title-only post).
+    - Hence, we filled these cells with empty string (`''`) (to show no body text).
 
 2. `author`:
-  - Similarly, we note that on Reddit, when the post and comment information is available, but not the author information, it implies that the user account was deleted (or that Reddit moderators removed the post or user). 
-  - Hence we replace the NaN values with the value `[deleted]`.
+    - Similarly, we note that on Reddit, when the post and comment information is available, but not the author information, it implies that the user account was deleted (or that Reddit moderators removed the post or user). 
+    - Hence we replace the NaN values with the value `[deleted]`.
 
 3. `flair`:
-  - Since "flair" is an optional tag on Reddit, not every post has a flair. This is what causes the NaN values.
-  - Therefore we set the `flair` tag for these posts to `None`.
+    - Since "flair" is an optional tag on Reddit, not every post has a flair. This is what causes the NaN values.
+    - Therefore we set the `flair` tag for these posts to `None`.
 
 
 * **Timestamp**:
