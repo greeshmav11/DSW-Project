@@ -1,5 +1,5 @@
 # Use Python 3.11.9 as the base image
-FROM python:3.11.9
+FROM tensorflow/tensorflow:2.15.0-gpu
 
 # Update the package list and upgrade existing packages to their latest versions
 # Install additional dependencies required for the container:
@@ -8,8 +8,7 @@ FROM python:3.11.9
 # - openssh-server: To enable SSH access
 # - ffmpeg, libsm6, libxext6: Libraries for multimedia processing
 # - htop: A process monitoring tool
-RUN apt-get update && apt-get upgrade -y && apt-get install -y sudo rsync openssh-server ffmpeg libsm6 libxext6 htop
-
+RUN apt-get update && apt-get install -y sudo rsync openssh-server ffmpeg libsm6 libxext6 htop screen python3-pip
 # Configure the SSH server:
 # - Create the directory for the SSH daemon to store its runtime files.
 # - Create the root user's `.ssh` directory and set appropriate permissions.
@@ -30,12 +29,14 @@ RUN apt-get install -y screen
 WORKDIR /storage/courses
 
 # Copy your code , requirements.txt file and install dependencies
-COPY src/ ./src/
+COPY models/ ./src/
 COPY requirements.txt .
-COPY cleaned_reddit_posts.csv .
+COPY data/cleaned_reddit_posts.csv .
 
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --no-deps --ignore-installed -r requirements.txt
+RUN pip install xgboost==3.0.2 --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
 
 
 # (Optional) COPY <src-path> <destination-path>
