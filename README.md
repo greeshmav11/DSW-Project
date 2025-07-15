@@ -104,7 +104,7 @@ Shapley values show the importance of features in the model:
   - This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
 * **Handling noisy URL data**
   - The `url` values were too varied and detailed for effective modeling (high cardinality).
-  - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.
+  - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.      
 
 
 
