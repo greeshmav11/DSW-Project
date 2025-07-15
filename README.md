@@ -66,11 +66,32 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 Two classification models (e.g., XXX, Multilayer Perceptron) will be trained to predict `popularity_bucket`.
 
+### Multilayer Perceptron Model Architecture:
+This model has three hidden layers, each using ReLU activation to capture complex patterns.  
+Dropout is added to help prevent overfitting and keep the model generalizable.   
+For the output, we use softmax to handle multiple classes.    
+It is trained using the Adam optimizer, with categorical crossentropy loss to make sure it effectively classifies the different categories.     
+A Keras model is wrapped and fine-tuned with GridSearchCV to identify the optimal hyperparameters.   
+The best-performing model is then assessed on the test set, with accuracy calculated after converting predictions and labels from one-hot encoding to class labels.    
+We used 3-fold cross-validation to evaluate the model's performance during hyperparameter tuning.  
+Evaluation metrics include accuracy, precision, recall, F1 score, confusion matrix, calibration curve, and Shapley values.
+
 ### Key Findings
 
 ...
 
-The neural network model performed significantly better using only categorical features, achieving around 56% accuracy compared to 32% when both categorical and textual features were used. This suggests that the textual data may have introduced noise or lacked sufficient signal for predicting popularity buckets.
+#### Multilayer Perceptron Model:
+The neural network model performed significantly better using only categorical features, achieving around 56% accuracy compared to 32% when both categorical and textual features were used. This suggests that the textual data may have introduced noise or lacked sufficient signal for predicting popularity buckets.    
+
+Our model outperforms the naive baseline by a clear margin across all metrics. This shows:    
+•	It is learning useful patterns from the data.      
+•	It is not guessing blindly like the baseline.    
+•	Even if not perfect, it provides meaningful classification, especially in a noisy task like social media popularity prediction.  
+
+Shapley values show the importance of features in the model:     
+•   'subreddit' and 'flair' are the most important features overall.    
+•   'is_self' and 'media_type' are moderately important.     
+•   'created_hour' and 'nsfw' have a very small impact, meaning they do not influence the model much.         
 
 ### Challenges faced
 
