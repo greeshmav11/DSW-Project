@@ -12,6 +12,10 @@
 
 import pandas as pd             
 import numpy as np
+import shap
+import contextlib
+import io
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.text import Tokenizer
@@ -162,7 +166,7 @@ study.optimize(objective, n_trials=20)
 
 # 4. Train final model using best parameters
 best_params = study.best_params
-print("\n✅ Best Hyperparameters:")
+print("\n Best Hyperparameters:")
 print(best_params)
 
 
@@ -191,7 +195,7 @@ prec = precision_score(y_test_labels, y_pred_labels, average="weighted", zero_di
 rec = recall_score(y_test_labels, y_pred_labels, average="weighted", zero_division=0)
 f1 = f1_score(y_test_labels, y_pred_labels, average="weighted", zero_division=0)
 
-print("\n📊 Final Test Set Performance (after retraining):")
+print("\n Final Test Set Performance (after retraining):")
 print(f"Accuracy:  {acc:.4f}")
 print(f"Precision: {prec:.4f}")
 print(f"Recall:    {rec:.4f}")
@@ -230,3 +234,16 @@ print(confusion_matrix(y_test_labels, naive_predictions))
 
 
 
+# Use SHAP DeepExplainer (suitable for Keras models)
+explainer = shap.DeepExplainer(final_model, X_train[:100])  # Use a small background dataset
+
+# Suppress verbose TensorFlow logs
+with contextlib.redirect_stdout(io.StringIO()):
+    shap_values = explainer.shap_values(X_test[:50])  # SHAP expects raw input (not one-hot encoded)
+
+shap.summary_plot(shap_values, X_test[:50], feature_names=cat_features + ['is_self', 'nsfw', 'created_hour'], show=False)
+plt.tight_layout()
+plt.savefig("DLModel_shap_summary.png")
+plt.close()
+
+final_model.save("DLModel_CategoricalFeatures.h5")
