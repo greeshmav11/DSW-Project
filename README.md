@@ -108,16 +108,16 @@ Shapley values show the importance of features in the model:
 
 
 
-* **Combining Different Types of Data**
-One of the biggest challenges we faced was figuring out how to bring together two very different kinds of information: the text from Reddit post titles and selftexts, and the categorical details like subreddit, flair, whether the post is a self-post, or marked as NSFW. Most existing methods usually handle just one type of data, so we had to create a custom process and design a model that could work smoothly with both at the same time.
-* **Input Shape Mismatch & Preprocessing Errors**
-We faced errors like “inconsistent number of samples” or “setting an array element with a sequence” when trying to combine text data with categorical features. It showed that making all inputs the same shape and format (through padding, encoding, and reshaping) was tricky but necessary.
-* **Hyperparameter Tuning with Custom Models**
+* **Combining Different Types of Data**     
+One challenge was merging Reddit post titles and selftexts with categorical info like subreddit, flair, self-post status, and NSFW tags. Most methods focus on just one data type, so we had to build a custom process and model that could handle both seamlessly.
+* **Input Shape Mismatch & Preprocessing Errors**      
+We faced a various errors when trying to combine text data with categorical features. It showed that making all inputs the same shape and format (through padding, encoding, and reshaping) was tricky but necessary.
+* **Hyperparameter Tuning with Custom Models**   
 Using GridSearchCV with a Keras-based model wrapped via KerasClassifier introduced further complexity, especially in passing model parameters like dropout_rate and avoiding invalid parameter errors. This tuning is straightforward for classic ML models but more error-prone with deep learning.
-* **Model Architecture vs. Hyperparameters**
-We adjusted things like batch size, epochs, and dropout rate using GridSearch, but choosing the best model structure, like how many layers or neurons to use, wasn’t included. That part needs to be tested manually, and it takes a lot of time and resources. This is a common challenge in deep learning: tuning architecture is harder and often not covered in basic automatic searches.
+* **Model Architecture vs. Hyperparameters**   
+We adjusted things like batch size, epochs, and dropout rate using GridSearch, but choosing the best model structure, like how many layers or neurons to use, was not included. That part needs to be tested manually, and it takes a lot of time and resources. This is a common challenge in deep learning: tuning architecture is harder and often not covered in basic automatic searches.
 * **Performance & Modest Accuracy**
-Even after combining text and other features, the final accuracy stayed low, around 32% with all features, and 57% using only the non-text ones. This shows how hard it is to predict social media popularity. Other research also finds that it's tricky because popularity depends on many random or hidden factors that models can’t easily capture.
+Even after combining text and other features, the final accuracy stayed low, around 32% with all features, and 57% using only the non-text ones. This shows how hard it is to predict social media popularity, as it depends on many random or hidden factors that models cannot easily capture.
 
 ---
 
