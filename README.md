@@ -8,33 +8,54 @@ This project involves the preprocessing and modeling of Reddit posts to predict 
 
 ### Dataset
 
-* Reddit posts scraped from a range of subreddits.
+* We used the **PRAW** (Python Reddit API Wrapper) library to programmatically access Reddit data through its API.
+* Reddit posts were scraped from a range of subreddits, such as 'technology', 'sports', 'science', 'politics', etc.
 * Data includes fields such as `title`, `selftext`, `score`, `num_comments`, `upvote_ratio`, `flair`, `author`, `created_utc`, and `url`.
 
-### Preprocessing Steps
+### Data Cleaning
+
+Most of the columns (or variables) contained no missing values, except for `selftext`, `flair` and `author`.
 
 * **Handling missing values**:
 
-  * `selftext` filled with empty string (`''`).
-  * `flair` missing values filled with `'None'`.
-  * `author` missing values filled with `'[deleted]'`, mimicking Reddit's own behavior.
+1. `selftext`:
+    - Since we know that an empty `selftext` means that the Reddit post contains no body text (it’s just a link post or a title-only post).
+    - Hence, we filled these cells with empty string (`''`) (to show no body text).
+
+2. `author`:
+    - Similarly, we note that on Reddit, when the post and comment information is available, but not the author information, it implies that the user account was deleted (or that Reddit moderators removed the post or user). 
+    - Hence we replace the NaN values with the value `[deleted]`.
+
+3. `flair`:
+    - Since "flair" is an optional tag on Reddit, not every post has a flair. This is what causes the NaN values.
+    - Therefore we set the `flair` tag for these posts to `None`.
+
+
 * **Timestamp**:
 
-  * `created_utc` converted to `created_hour` to preserve temporal information.
-  * Dropped the original timestamp column.
-* **Text cleaning**:
+  * `created_utc` field was converted to `created_hour`, to retain the hour at which the post was created.
+  * And then the original timestamp column was dropped (as it's then redundant)
 
-  * Lowercasing.
-  * Removing HTML tags and URLs.
-  * Removing excessive whitespace.
 * **URL domain analysis**:
 
-  * Extracted top domains.
-  * Mapped them into `media_type`: image, video, internal Reddit, or external link.
-  * Dropped `url` and `url_domain` afterward.
+  * Since the `url` field had a very high cardinality (almost unique for each post), to retain meaningful information, it was first grouped by url domain.
+  * However, since the resulting grouping was still very sparse, we decided to group the urls to a more meaningful new field, `media_type`, which categorizes the  posts as image, video, internal Reddit link, or external link based on their urls.
+  * This makes sense as these Reddit-hosted domains (like i.redd.it, v.redd.it, and www.reddit.com) for image and video hosting were most dominant.
+  * The fields `url` and `url_domain` were dropped afterward.
+
+* **Text cleaning**:
+
+  * Basic text cleaning was performed on the two text fields: `title` and `self_text`.
+  * This included:
+  - Lowercasing.
+  - Removing HTML tags and URLs.
+  - Removing excessive whitespace.
+
 * **Target label**:
 
-  * `score` bucketed into `low`, `medium`, `high` using quantiles to ensure class balance.
+  * Instead of predicting Reddit post scores (a regression task), we simplified the problem into a classificatiion task by categorizing the `score`field into buckets (`low`, `medium`, `high` popularity).
+  * The post scores were divided into the three categories based on quantiles.
+  * Since the dataset was already balanced across the `popularity_bucket` categories, we didn't need to apply any additional sampling techniques to balance the data.
 
 ### Features used
 
@@ -44,15 +65,25 @@ This project involves the preprocessing and modeling of Reddit posts to predict 
 
 Two classification models (e.g., XXX, XXX) will be trained to predict `popularity_bucket`.
 
+### Key Findings
+
+...
+
 ---
 
-## Key Challenges
+### Challenges faced
 
-### Challenges
+* **Finding Accessible Data Sources**
+  - Identifying websites that were not blocked, restricted by paywalls, or limited by access policies was a key challenge during data collection.
+* **Handling missing values** 
+  - Required careful inspection and probing into the data and domain, to figure out the appropriate values to fill into the missing entries (for example: in the author and self-text fields).
+* **Defining popularity**
+  - Instead of using raw `score` values, we used quantiles to create balanced, more meaningful categories (by creating field `popularity_bucket`).
+  - This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
+* **Handling noisy URL data**
+  - The `url` values were too varied and detailed for effective modeling (high cardinality).
+  - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.
 
-* **Noisy user-generated text**: Requires careful cleaning and handling of missing/incomplete posts.
-* **Imbalanced sources and post formats**: Reddit contains a wide variety of media and text formats.
-* **Defining popularity**: Instead of raw scores, we use quantiles to create meaningful, balanced categories.
 
 ---
 
@@ -61,8 +92,14 @@ Two classification models (e.g., XXX, XXX) will be trained to predict `popularit
 ### Repository Structure
 
 ```
-.
 DSW PROJECT/
+│
+├── .venv/
+│
+├── cluster/
+│   ├── remote-deployment.yml
+│   ├── remote-job.yml
+│   └── storage.yml
 │
 ├── data/
 │   ├── reddit_dataset.csv
@@ -70,21 +107,26 @@ DSW PROJECT/
 │
 ├── models/
 │   ├── DLModel.ipynb
-│   └── DLModel_CategoricalFeatures.ipynb
+│   ├── DLModel_CategoricalFeatures.ipynb
+│   ├── xgboost_final.ipynb
+│   └── DLModelExplanations.md
 │
 ├── notebooks/
 │   ├── reddit_post_scraper.ipynb
 │   └── reddit_dataset_cleaning.ipynb
 │
+├── .gitignore
+├── Dockerfile
 ├── README.md
+└── requirements.txt
 
 ```
 
 ### To Clean the Data:
 
-1. Open `reddit_data_cleaning.ipynb`
+1. Open `reddit_dataset_cleaning.ipynb`
 2. Run all cells
-3. Output will be saved as `cleaned__reddit_posts.csv`
+3. Output will be saved as `cleaned_reddit_posts.csv`
 
 ### To Train Models:
 
@@ -96,8 +138,9 @@ DSW PROJECT/
 
 ## Next Steps
 
+* Implementing a Multimodal Model Using BERT for text fields (as it performs well for text features) and Gradient Boosting (as it handles numerical and categorical features well).
 * Train models using both metadata-only and full-text features.
-* Compare model performance across different feature sets.
+* Compare both models' performance across different feature sets.
 
 ---
 
