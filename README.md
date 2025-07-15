@@ -89,9 +89,9 @@ Our model outperforms the naive baseline by a clear margin across all metrics. T
 •	Even if not perfect, it provides meaningful classification, especially in a noisy task like social media popularity prediction.  
 
 Shapley values show the importance of features in the model:     
-•   'subreddit' and 'flair' are the most important features overall.    
-•   'is_self' and 'media_type' are moderately important.     
-•   'created_hour' and 'nsfw' have a very small impact, meaning they do not influence the model much.         
+•   `subreddit` and `flair` are the most important features overall.    
+•   `is_self` and `media_type` are moderately important.     
+•   `created_hour` and `nsfw` have a very small impact, meaning they do not influence the model much.         
 
 ### Challenges faced
 
