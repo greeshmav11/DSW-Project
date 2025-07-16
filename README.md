@@ -19,16 +19,16 @@ Most of the columns (or variables) contained no missing values, except for `self
 * **Handling missing values**:
 
 1. `selftext`:
-  - Since we know that an empty `selftext` means that the Reddit post contains no body text (it’s just a link post or a title-only post).
-  - Hence, we filled these cells with empty string (`''`) (to show no body text).
+    - Since we know that an empty `selftext` means that the Reddit post contains no body text (it’s just a link post or a title-only post).
+    - Hence, we filled these cells with empty string (`''`) (to show no body text).
 
 2. `author`:
-  - Similarly, we note that on Reddit, when the post and comment information is available, but not the author information, it implies that the user account was deleted (or that Reddit moderators removed the post or user). 
-  - Hence we replace the NaN values with the value `[deleted]`.
+    - Similarly, we note that on Reddit, when the post and comment information is available, but not the author information, it implies that the user account was deleted (or that Reddit moderators removed the post or user). 
+    - Hence we replace the NaN values with the value `[deleted]`.
 
 3. `flair`:
-  - Since "flair" is an optional tag on Reddit, not every post has a flair. This is what causes the NaN values.
-  - Therefore we set the `flair` tag for these posts to `None`.
+    - Since "flair" is an optional tag on Reddit, not every post has a flair. This is what causes the NaN values.
+    - Therefore we set the `flair` tag for these posts to `None`.
 
 
 * **Timestamp**:
@@ -38,10 +38,10 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 * **URL domain analysis**:
 
-* Since the `url` field had a very high cardinality (almost unique for each post), to retain meaningful information, it was first grouped by url domain.
-* However, since the resulting grouping was still very sparse, we decided to group the urls to a more meaningful new field, `media_type`, which categorizes the  posts as image, video, internal Reddit link, or external link based on their urls.
-* This makes sense as these Reddit-hosted domains (like i.redd.it, v.redd.it, and www.reddit.com) for image and video hosting were most dominant.
-* The fields `url` and `url_domain` were dropped afterward.
+  * Since the `url` field had a very high cardinality (almost unique for each post), to retain meaningful information, it was first grouped by url domain.
+  * However, since the resulting grouping was still very sparse, we decided to group the urls to a more meaningful new field, `media_type`, which categorizes the  posts as image, video, internal Reddit link, or external link based on their urls.
+  * This makes sense as these Reddit-hosted domains (like i.redd.it, v.redd.it, and www.reddit.com) for image and video hosting were most dominant.
+  * The fields `url` and `url_domain` were dropped afterward.
 
 * **Text cleaning**:
 
@@ -60,30 +60,64 @@ Most of the columns (or variables) contained no missing values, except for `self
 ### Features used
 
 * `title`, `selftext`, `flair`, `author`, `num_comments`, `created_hour`, `media_type`
+* `subreddit`, `flair`, `media_type`, `is_self`, `nsfw`, `created_hour`
 
 ### Models
 
-Two classification models (e.g., XXX, XXX) will be trained to predict `popularity_bucket`.
+Two classification models (e.g., XXX, Multilayer Perceptron) will be trained to predict `popularity_bucket`.
+
+### Multilayer Perceptron Model Architecture:
+This model has three hidden layers, each using ReLU activation to capture complex patterns.  
+Dropout is added to help prevent overfitting and keep the model generalizable.   
+For the output, we use softmax to handle multiple classes.    
+It is trained using the Adam optimizer, with categorical crossentropy loss to make sure it effectively classifies the different categories.     
+A Keras model is wrapped and fine-tuned with GridSearchCV to identify the optimal hyperparameters.   
+The best-performing model is then assessed on the test set, with accuracy calculated after converting predictions and labels from one-hot encoding to class labels.    
+We used 3-fold cross-validation to evaluate the model's performance during hyperparameter tuning.  
+Evaluation metrics include accuracy, precision, recall, F1 score, confusion matrix, calibration curve, and Shapley values.
 
 ### Key Findings
 
 ...
 
----
+#### Multilayer Perceptron Model:
+The neural network model performed significantly better using only categorical features, achieving around 56% accuracy compared to 32% when both categorical and textual features were used. This suggests that the textual data may have introduced noise or lacked sufficient signal for predicting popularity buckets.    
+
+Our model outperforms the naive baseline by a clear margin across all metrics. This shows:    
+•	It is learning useful patterns from the data.      
+•	It is not guessing blindly like the baseline.    
+•	Even if not perfect, it provides meaningful classification, especially in a noisy task like social media popularity prediction.  
+
+Shapley values show the importance of features in the model:     
+•   `subreddit` and `flair` are the most important features overall.    
+•   `is_self` and `media_type` are moderately important.     
+•   `created_hour` and `nsfw` have a very small impact, meaning they do not influence the model much.         
 
 ### Challenges faced
 
 * **Finding Accessible Data Sources**
-- Identifying websites that were not blocked, restricted by paywalls, or limited by access policies was a key challenge during data collection.
+  - Identifying websites that were not blocked, restricted by paywalls, or limited by access policies was a key challenge during data collection.
 * **Handling missing values** 
-- Required careful inspection and probing into the data and domain, to figure out the appropriate values to fill into the missing entries (for example: in the author and self-text fields).
+  - Required careful inspection and probing into the data and domain, to figure out the appropriate values to fill into the missing entries (for example: in the author and self-text fields).
 * **Defining popularity**
-- Instead of using raw `score` values, we used quantiles to create balanced, more meaningful categories (by creating field `popularity_bucket`).
-- This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
+  - Instead of using raw `score` values, we used quantiles to create balanced, more meaningful categories (by creating field `popularity_bucket`).
+  - This was done instead of using arbitrary, fixed thresholds (which would also be dataset dependant).
 * **Handling noisy URL data**
-- The `url` values were too varied and detailed for effective modeling (high cardinality).
-- Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.
+  - The `url` values were too varied and detailed for effective modeling (high cardinality).
+  - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.      
 
+
+
+* **Combining Different Types of Data**     
+One challenge was merging Reddit post `titles` and `selftexts` with categorical info like `subreddit`, `flair`, `self-post status`, and `nsfw tags`. Most methods focus on just one data type, so we had to build a custom process and model that could handle both seamlessly.
+* **Input Shape Mismatch & Preprocessing Errors**      
+We faced a various errors when trying to combine text data with categorical features. It showed that making all inputs the same shape and format (through padding, encoding, and reshaping) was tricky but necessary.
+* **Hyperparameter Tuning with Custom Models**   
+Using GridSearchCV with a Keras-based model wrapped via KerasClassifier introduced further complexity, especially in passing model parameters like dropout_rate and avoiding invalid parameter errors. This tuning is straightforward for classic ML models but more error-prone with deep learning.
+* **Model Architecture vs. Hyperparameters**   
+We adjusted things like batch size, epochs, and dropout rate using GridSearch, but choosing the best model structure, like how many layers or neurons to use, was not included. That part needs to be tested manually, and it takes a lot of time and resources. This is a common challenge in deep learning: tuning architecture is harder and often not covered in basic automatic searches.
+* **Performance & Modest Accuracy**   
+Even after combining text and other features, the final accuracy stayed low, around 32% with all features, and 57% using only the non-text ones. This shows how hard it is to predict social media popularity, as it depends on many random or hidden factors that models cannot easily capture.
 
 ---
 
