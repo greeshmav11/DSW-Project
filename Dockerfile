@@ -8,7 +8,7 @@ FROM tensorflow/tensorflow:2.15.0-gpu
 # - openssh-server: To enable SSH access
 # - ffmpeg, libsm6, libxext6: Libraries for multimedia processing
 # - htop: A process monitoring tool
-RUN apt-get update && apt-get install -y sudo rsync openssh-server ffmpeg libsm6 libxext6 htop screen python3-pip
+RUN apt-get update && apt-get install -y sudo rsync openssh-server ffmpeg libsm6 libxext6 htop screen python3-pip git
 # Configure the SSH server:
 # - Create the directory for the SSH daemon to store its runtime files.
 # - Create the root user's `.ssh` directory and set appropriate permissions.
