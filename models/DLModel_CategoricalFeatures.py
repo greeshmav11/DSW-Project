@@ -30,6 +30,7 @@ import optuna
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import cohen_kappa_score, matthews_corrcoef, log_loss
 
 
 
@@ -200,7 +201,14 @@ print(f"Precision: {prec:.4f}")
 print(f"Recall:    {rec:.4f}")
 print(f"F1 Score:  {f1:.4f}")
 
+# Additional evaluation metrics
+kappa = cohen_kappa_score(y_test_labels, y_pred_labels)
+mcc = matthews_corrcoef(y_test_labels, y_pred_labels)
+logloss = log_loss(y_test_labels, y_pred)
 
+print(f"Cohen's Kappa: {kappa:.4f}")
+print(f"Matthews Correlation Coefficient (MCC): {mcc:.4f}")
+print(f"Log Loss: {logloss:.4f}")
 
 
 # Naive Baseline 
@@ -219,6 +227,12 @@ naive_accuracy = accuracy_score(y_test_labels, naive_predictions)
 naive_precision = precision_score(y_test_labels, naive_predictions, average='weighted', zero_division=0)
 naive_recall = recall_score(y_test_labels, naive_predictions, average='weighted', zero_division=0)
 naive_f1 = f1_score(y_test_labels, naive_predictions, average='weighted', zero_division=0)
+naive_kappa = cohen_kappa_score(y_test_labels, naive_predictions)
+naive_mcc = matthews_corrcoef(y_test_labels, naive_predictions)
+naive_logloss = log_loss(y_test_labels, 
+                         np.eye(3)[naive_predictions],  # convert to one-hot for log_loss
+                         labels=[0, 1, 2])  # ensure label alignment
+
 
 print("\n=== Naive Baseline Metrics ===")
 print(f"Most Frequent Class: {most_common_class} ({label_encoder.inverse_transform([most_common_class])[0]})")
@@ -226,6 +240,10 @@ print(f"Accuracy: {naive_accuracy:.4f}")
 print(f"Precision: {naive_precision:.4f}")
 print(f"Recall: {naive_recall:.4f}")
 print(f"F1 Score: {naive_f1:.4f}")
+print(f"Cohen's Kappa: {naive_kappa:.4f}")
+print(f"Matthews Correlation Coefficient (MCC): {naive_mcc:.4f}")
+print(f"Log Loss: {naive_logloss:.4f}")
+
 
 # Print confusion matrix for naive baseline
 print("\nNaive Baseline Confusion Matrix:")

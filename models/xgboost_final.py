@@ -103,13 +103,18 @@ print("Majority class in training data:", majority_class)
 # 2. Predict the majority class for all X_test samples
 y_pred_baseline = np.full_like(y_test, fill_value=majority_class)
 
+# Convert majority class predictions to probability format for log loss
+y_proba_baseline = np.zeros((len(y_test), len(np.unique(y_test))))
+y_proba_baseline[:, majority_class] = 1
+
+
 # 3. Evaluate performance
 print("\nBaseline Performance (Majority Class):")
 print("Accuracy:", round(accuracy_score(y_test, y_pred_baseline), 4))
 print("F1 Score (macro):", round(f1_score(y_test, y_pred_baseline, average='macro'), 4))
 print("Cohen's Kappa:", round(cohen_kappa_score(y_test, y_pred_baseline), 4))
 print("Matthews Correlation Coefficient (MCC):", round(matthews_corrcoef(y_test, y_pred_baseline), 4))
-
+print("Log Loss:", round(log_loss(y_test, y_proba_baseline), 4))
 
 
 # Train an XGBOOST Model
