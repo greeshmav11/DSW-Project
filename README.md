@@ -64,7 +64,10 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 ### Models
 
-Two classification models (e.g., XGBoost, Multilayer Perceptron) will be trained to predict `popularity_bucket`.
+- Two classification models (e.g., XGBoost, Multilayer Perceptron) were trained to predict `popularity_bucket`.
+- Our models were trained on the K80 cluster
+- Hyperparameter tuning was performed using Optuna
+
 
 ### XGBoost Model
 
