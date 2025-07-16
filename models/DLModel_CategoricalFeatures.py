@@ -1,13 +1,12 @@
+# .py files of notebooks to run on cluster
+
+
 #!/usr/bin/env python
 # coding: utf-8
-
-
 
 # !pip install pandas
 #  !pip install tensorflow
 # !pip install scikeras
-
-
 
 
 import pandas as pd             

@@ -59,8 +59,8 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 ### Features used
 
-* `title`, `selftext`, `flair`, `author`, `num_comments`, `created_hour`, `media_type`
-* `subreddit`, `flair`, `media_type`, `is_self`, `nsfw`, `created_hour`
+* For XGBoost model - `title`, `subreddit`, `selftext`, `flair`, `author`, `created_hour`, `media_type`, `is_self`
+* For MultiLayer Perceptron model - `subreddit`, `flair`, `media_type`, `is_self`, `nsfw`, `created_hour`
 
 ### Models
 
@@ -77,8 +77,6 @@ We used 3-fold cross-validation to evaluate the model's performance during hyper
 Evaluation metrics include accuracy, precision, recall, F1 score, confusion matrix, calibration curve, and Shapley values.
 
 ### Key Findings
-
-...
 
 #### Multilayer Perceptron Model:
 The neural network model performed significantly better using only categorical features, achieving around 56% accuracy compared to 32% when both categorical and textual features were used. This suggests that the textual data may have introduced noise or lacked sufficient signal for predicting popularity buckets.    
@@ -106,8 +104,6 @@ Shapley values show the importance of features in the model:
   - The `url` values were too varied and detailed for effective modeling (high cardinality).
   - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.      
 
-
-
 * **Combining Different Types of Data**     
 One challenge was merging Reddit post `titles` and `selftexts` with categorical info like `subreddit`, `flair`, `self-post status`, and `nsfw tags`. Most methods focus on just one data type, so we had to build a custom process and model that could handle both seamlessly.
 * **Input Shape Mismatch & Preprocessing Errors**      
@@ -115,7 +111,8 @@ We faced a various errors when trying to combine text data with categorical feat
 * **Hyperparameter Tuning with Custom Models**   
 Using GridSearchCV with a Keras-based model wrapped via KerasClassifier introduced further complexity, especially in passing model parameters like dropout_rate and avoiding invalid parameter errors. This tuning is straightforward for classic ML models but more error-prone with deep learning.
 * **Model Architecture vs. Hyperparameters**   
-We adjusted things like batch size, epochs, and dropout rate using GridSearch, but choosing the best model structure, like how many layers or neurons to use, was not included. That part needs to be tested manually, and it takes a lot of time and resources. This is a common challenge in deep learning: tuning architecture is harder and often not covered in basic automatic searches.
+We adjusted things like batch size, epochs, and dropout rate using GridSearch, but choosing the best model structure, such as how many layers or neurons to use, was not included. That part needs to be tested manually, and it takes a lot of time and resources. This is a common challenge in deep learning: tuning architecture is harder and often not covered in basic automatic searches.
+
 * **Performance & Modest Accuracy**   
 Even after combining text and other features, the final accuracy stayed low, around 32% with all features, and 57% using only the non-text ones. This shows how hard it is to predict social media popularity, as it depends on many random or hidden factors that models cannot easily capture.
 
@@ -142,10 +139,11 @@ DSW PROJECT/
 ├── models/
 │   ├── DLModel.ipynb
 │   ├── DLModel_CategoricalFeatures.ipynb
+│   ├── DLModel_CategoricalFeatures.py
 │   ├── xgboost_final.ipynb
-│   └── DLModelExplanations.md
+│   └── xgboost_final.py
 │
-├── notebooks/
+├── preprocessing/
 │   ├── reddit_post_scraper.ipynb
 │   └── reddit_dataset_cleaning.ipynb
 │
@@ -185,4 +183,3 @@ DSW PROJECT/
 * Homa Sadat Ale Ebrahim (Reg. No.: 949777)
 
 ---
-
