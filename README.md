@@ -64,7 +64,31 @@ Most of the columns (or variables) contained no missing values, except for `self
 
 ### Models
 
-Two classification models (e.g., XXX, Multilayer Perceptron) will be trained to predict `popularity_bucket`.
+- Two classification models (e.g., XGBoost, Multilayer Perceptron) were trained to predict `popularity_bucket`.
+- Our models were trained on the K80 cluster
+- Hyperparameter tuning was performed using Optuna
+
+
+### XGBoost Model
+
+We trained an XGBoost classifier to predict the popularity bucket of Reddit posts based on a mix of textual and structured features.
+
+* **Training and Evaluation**:
+
+- The dataset was split into training and test sets with stratified sampling to keep class distribution balanced.
+
+- We trained the initial XGBoost model with default parameters and evaluated it on the test set, measuring accuracy, F1 score, Cohen’s Kappa, and Matthews Correlation Coefficient.
+
+- To improve the model, we applied cross-validation with 5 stratified folds to better estimate performance.
+
+- Hyperparameter tuning was performed using Optuna, which automatically searches for the best model settings to maximize the F1 score on the test set.
+
+- After tuning, the final model was retrained on the full training data using the best parameters found.
+
+- We visualized feature importance and used SHAP values to interpret how different features influenced the model’s predictions.
+
+- The final model's performance showed a significant improvement over a naive baseline, demonstrating it learns meaningful patterns to classify Reddit post popularity.
+
 
 ### Multilayer Perceptron Model Architecture:
 This model has three hidden layers, each using ReLU activation to capture complex patterns.  
@@ -77,6 +101,20 @@ We used 3-fold cross-validation to evaluate the model's performance during hyper
 Evaluation metrics include accuracy, precision, recall, F1 score, confusion matrix, calibration curve, and Shapley values.
 
 ### Key Findings
+
+### XGBoost Model
+
+- The XGBoost classifier outperformed the naive baseline across all evaluation metrics (Accuracy, F1 Score, Kappa, MCC), confirming that it successfully learned meaningful patterns in the data.
+
+- Textual features from post titles (TF-IDF) combined with structured metadata improved the model's ability to predict popularity buckets.
+
+- After hyperparameter tuning with Optuna, the model achieved better performance compared to the untuned version.
+
+- 5-Fold Cross-Validation showed consistent results across all folds, indicating the model generalizes well and is not overfitting to a specific subset.
+
+- SHAP value analysis revealed that features like subreddit, flair, and media type were the most influential in determining post popularity.
+
+- The final model was saved and can be reused for future predictions or comparisons.
 
 #### Multilayer Perceptron Model:
 The neural network model performed significantly better using only categorical features, achieving around 56% accuracy compared to 32% when both categorical and textual features were used. This suggests that the textual data may have introduced noise or lacked sufficient signal for predicting popularity buckets.    
@@ -103,6 +141,9 @@ Shapley values show the importance of features in the model:
 * **Handling noisy URL data**
   - The `url` values were too varied and detailed for effective modeling (high cardinality).
   - Inspection of the URLs, to derive a meaningful feature such as `media_type` was a challenge.      
+
+* **Hyperparameter Tuning Was Time-Consuming**:
+  - Using Optuna to test many combinations of settings (like how deep the trees should be or how fast the model should learn) took a lot of time and computing power. We had to run over 30 trials, which needed a GPU and made the process slow.
 
 * **Combining Different Types of Data**     
 One challenge was merging Reddit post `titles` and `selftexts` with categorical info like `subreddit`, `flair`, `self-post status`, and `nsfw tags`. Most methods focus on just one data type, so we had to build a custom process and model that could handle both seamlessly.
@@ -162,10 +203,22 @@ DSW PROJECT/
 
 ### To Train Models:
 
+Initially, we trained the models locally using VSCode. However, due to the long training times especially during hyperparameter tuning and cross-validation, we moved the model training to Kubernetes cluster for better performance.
+
+* Local Training (Initial Phase)
 1. Open `modeling.ipynb`
 2. Load `cleaned_data.csv`
 3. Train and evaluate your models on the `popularity_bucket` column
 
+* Cluster-Based Training (Final Phase)
+1. Final models were trained using:
+    - `models/xgboost_final.py`
+    - `models/DLModel_CategoricalFeatures.py`
+2. These scripts were deployed to a Kubernetes cluster using:
+    - `cluster/remote-deployment.yml`
+    - `cluster/remote-job.yml`
+    - `cluster/storage.yml`
+This setup allowed us to train faster using GPU/CPU resources available in the cluster.
 ---
 
 ## Next Steps
